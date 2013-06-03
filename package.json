@@ -1,0 +1,18 @@
+{
+  "name": "microblog",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "3.2.4",
+    "ejs": "*",
+    "express-partials": "*",
+    "connect": "*",
+    "connect-mongo": ">=0.3.2",
+    "connect-flash": "*",
+    "mongodb": "1.3.5",
+    "markdown": "*"
+  }
+}
