@@ -3,13 +3,21 @@
   <h1>歡迎來到 K-blog</h1>
   <p>K-blog 是一個基於 Node.js 的微博系統。</p>
   <p>
-    <a class="btn btn-primary btn-large" href="/login">登陆</a>
-    <a class="btn btn-large" href="/reg">立即註冊</a>
+    <% if(!locals.user){ %>
+        <a class="btn btn-primary btn-large" href="/login">登陆</a>
+        <a class="btn btn-large" href="/reg">立即注册</a>
+    <% }else{%>
+        <a class="btn btn-primary btn-large" href="/post">发表文章</a>
+    <% } %>
   </p>
+
+  <% if(locals.test){ %>
+  <p><%= locals.test %></p>
+  <% } %>
 </div>
 
 <div class="row">
-  <div class="span4">
+ <div class="span4">
     <h2>Spring</h2>
      <p>
 	君生我未生，我生君已老  
@@ -43,4 +51,13 @@
 	高山安可仰，徒此揖清芬。
     </p>
   </div>
+
+    <% posts.forEach(function(post, index){  %>
+    <div class="span4">
+        <h2><%= post.title %></h2>
+        <p>作者: <%= post.name %> &nbsp;<%= post.time.day %></p>
+        <p><%= post.post %></p>
+    </div>
+    <% }) %>
+
 </div>

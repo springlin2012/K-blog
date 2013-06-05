@@ -18,6 +18,8 @@ var express = require('express')
     // 设置 port 参数
     app.set('port', process.env.PORT || 3000);
     app.set('views', __dirname + '/views');
+    //app.engine('ejs',require('ejs-locals'));
+    //app.locals._layoutFile = '/layout.ejs';
     app.set('view engine', 'ejs');
 
     //模板 (3.0 去掉了layout 页面布局模板风格)
@@ -34,7 +36,8 @@ var express = require('express')
     app.use(express.session({
         secret: settings.cookieSecret,
         key: settings.db,
-        cookie: { maxAge: 6000 },
+        //6000
+        cookie: { maxAge: 1000 * 60 * 60 * 24 * 30 },//30 day
         store: new MongoStore({
             db: settings.db
         })
@@ -51,19 +54,20 @@ var express = require('express')
 
 
 //
-app.use(function (req, res, next) {
-    console.log("======>>> req res filter...");
+/*app.use(function (req, res, next) {
+    //console.log("======>>> req res filter...");
 
     var err = req.flash('error'),
-        success = req.flash('success');
+    success = req.flash('success');
 
     res.locals.user = req.session.user;
     res.locals.error = err.length ? err : null;
     res.locals.success = success.length ? success : null;
+    res.locals.test = "test";
 
     next();
 });
-
+*/
 
 //开发模式, （为默认启动模式)
 app.configure('development', function(){

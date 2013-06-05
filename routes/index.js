@@ -4,7 +4,8 @@
  */
 
 var crypto = require('crypto')
-   , User = require('../models/user.js');
+   , User = require('../models/user.js')
+   , Post = require('../models/post.js');
 
 //导出
 //exports.index = function(req, res) {
@@ -14,13 +15,24 @@ var crypto = require('crypto')
 module.exports = function (app) {
     //首页
     app.get('/', function (req, res) {
-        res.render('index', {
-            title: '首页',
-            layout: 'layout',
-            user: req.session.user,
-            success: req.flash('success').toString(),
-            error: req.flash('error').toString()
+        //查询文章列表
+        Post.get(null, function (err, posts) {
+            if (err) {
+                posts = [];
+            }
+            //var user = req.session.user;
+            //console.log('Post.get ===>>> currentUser: ' + (user == null || user === 'undefined' ? "" : user.name));
+
+            res.render('index', {
+                title: '首页',
+                layout: 'layout',
+                user: req.session.user,
+                posts: posts,
+                success: req.flash('success').toString(),
+                error: req.flash('error').toString()
+            });
         });
+
     });
 
     //注册
@@ -104,7 +116,7 @@ module.exports = function (app) {
                 return res.redirect('/login');
             }
 
-            console.log(" pwd compare ===>>> login pwd: " + password + " db pwd: " + user.password)
+            //console.log(" pwd compare ===>>> login pwd: " + password + " db pwd: " + user.password)
             if (user.password != password) {
                 req.flash('error', '用户口令错误!');
                 return res.redirect('/login');
@@ -112,10 +124,42 @@ module.exports = function (app) {
 
             req.session.user = user;
             req.flash('success', '登陆成功');
+            console.log('Login in success ===>>> currentUser: ' + user.name);
             res.redirect('/');
         });
 
     });
+
+    //文章发表
+    app.get('/post', checkLogin);
+    app.get('/post', function (req, res) {
+        res.render('post', {
+            title: '发表',
+            user: req.session.user,
+            success: req.flash('success').toString(),
+            error: req.flash('error').toString()
+        });
+    });
+
+    app.post('/post', checkLogin);
+    app.post('/post', function (req, res) {
+        var currentUser = req.session.user,
+            post = new Post(currentUser.name, req.body.title, req.body.post);
+
+        //保存发表
+        post.save(function (err) {
+            //异常回调
+            if (err) {
+                req.flash('error', err);
+                return res.redirect('/');
+            }
+
+            req.flash('success', '发表成功');
+            res.redirect('/');
+        });
+
+    });
+
 
     //登出
     app.get('/logout', checkLogin);
