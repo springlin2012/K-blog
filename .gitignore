@@ -13,6 +13,7 @@ logs
 results
 
 npm-debug.log
+manifest.yml
 
 node_modules
 StartMicroblogServer

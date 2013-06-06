@@ -16,6 +16,6 @@ $ npm install
 ```
 
 ##其它
- **K-blog** 采用 nodejs v0.84 版本.
+ **K-blog** 采用 nodejs v0.8.4 版本.
 
 如: 启动或访问时报一些奇怪错误,可检查 **package.json** 文件各组件是否存在版本兼容问题.
