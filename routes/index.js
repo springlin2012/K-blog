@@ -43,13 +43,20 @@ module.exports = function (app) {
             layout: 'layout',
             user: req.session.user,
             success: req.flash('success').toString(),
-            error: req.flash('error').toString()
+            error: req.flash('error').toString(),
+            inCodeError: req.flash('inCodeError').toString()
         });
     });
 
     app.post('/reg', checkNotlogin);
     app.post('/reg', function (req, res) {
         console.log("===== reg inint =====");
+
+        var inCode = req.body.inCode;
+        if (!inCode || inCode !== 'spring2013') {
+            req.flash('inCodeError', '邀请码错, 不能注册!');
+            return res.redirect('/reg');
+        }
 
         if (req.body['password-repeat'] != req.body['password']) {
             req.flash('error', '两次输入密码不一致');

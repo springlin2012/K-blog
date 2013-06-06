@@ -61,7 +61,7 @@ User.get = function get(username, callback) {
                 if (doc) {
                     //封装为 User 对象
                     var user = new User(doc);
-                    console.log('user.js ===>>> login user:' + user.name);
+                    //console.log('user.js ===>>> login user:' + user.name);
                     callback(null, user);
                 } else {
                     callback(err, null);

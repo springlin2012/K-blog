@@ -37,7 +37,8 @@ var express = require('express')
         secret: settings.cookieSecret,
         key: settings.db,
         //6000
-        cookie: { maxAge: 1000 * 60 * 60 * 24 * 30 },//30 day
+        //30day: 1000 * 60 * 60 * 24 * 30
+        cookie: { maxAge:  1000 * 60},
         store: new MongoStore({
             db: settings.db
         })

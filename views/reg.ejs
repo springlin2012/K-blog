@@ -16,10 +16,17 @@
             </div>
         </div>
         <div class="control-group">
-            <label class="control-label" for="password-repeat">密码</label>
+            <label class="control-label" for="password-repeat">确认密码</label>
             <div class="controls">
                 <input type="password" class="input-xlarge" id="password-repeat" name="password-repeat" />
                 <p class="error_block"><%= locals.error %></p>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="inCode">邀请码</label>
+            <div class="controls">
+                <input type="text" class="input-xlarge" id="inCode" name="inCode" />
+                <p class="error_block" style="color: red;"><%= locals.inCodeError %></p>
             </div>
         </div>
         <div class="form-actions">
