@@ -12,7 +12,7 @@ K-blog 是使用 **Node.js** 及 **MongoDB**数据库, **Express**框架, **ejs**模板, 搭
 //run mongodb
 $ cd k-blog
 $ npm install
-运行 k-blog 目录下 StartMicroblogServer.bat 或 $ node app.js
+$ node app.js
 ```
 
 ##其它
