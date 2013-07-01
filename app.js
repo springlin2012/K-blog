@@ -53,29 +53,10 @@ var express = require('express')
 //});
 
 
-
-//
-/*app.use(function (req, res, next) {
-    //console.log("======>>> req res filter...");
-
-    var err = req.flash('error'),
-    success = req.flash('success');
-
-    res.locals.user = req.session.user;
-    res.locals.error = err.length ? err : null;
-    res.locals.success = success.length ? success : null;
-    res.locals.test = "test";
-
-    next();
-});
-*/
-
-//开发模式, （为默认启动模式)
 app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
-//产品模式
 app.configure('production', function () {
     app.user(express.errorHandler());
 });
@@ -94,32 +75,3 @@ http.createServer(app).listen(app.get('port'), function(){
 });
 
 routes(app);
-
-
-
-//请求映射到routes目录,　exports.index
-//app.get('/',routes.index);
-//app.get('/login', routes.login);
-
-// 3.0 前 (动态视图助手)
-/*
-app.dynamicHelpers({
-    user: function (req, res) {
-        return req.session.user;
-    },
-    error: function (req, res) {
-        var err = req.flash('error');
-        if (err.length)
-            return err;
-        else
-            return '';
-    },
-    success: function (req, res) {
-        var succ = req.flash('success');
-        if (succ.length)
-            return succ;
-        else
-            return '';
-    }
-});
-*/

@@ -1,16 +1,18 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html>
   <head>
-    <title><%= title %> - Microblog</title>
+    <title>K-blog</title>
+    <link href="/images/ctip.ico" type="image/x-icon" rel="icon">
+    <link href="/images/ctip.ico" type="image/x-icon" rel="shortcut icon">
     <link rel='stylesheet' href='/stylesheets/bootstrap.css' />
+     <link href="stylesheets/bootstrap-responsive.css" rel="stylesheet">
     <style type="text/css">
       body {
         padding-top: 60px;
         padding-bottom: 40px;
       }
     </style>
-    <link href="stylesheets/bootstrap-responsive.css" rel="stylesheet">
+   
   </head>
   <body>
   
@@ -22,7 +24,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <a class="brand" href="/">Microblog</a>
+          <a class="brand" href="/">K-blog</a>
           <div class="nav-collapse">
             <ul class="nav">
               <li class="active"><a href="/">首頁</a></li>
@@ -57,11 +59,31 @@
       <%- body %>
       <hr />
       <footer>
-        <p><a href="http://www.byvoid.com/" target="_blank">BYVoid</a> 2012</p>
+        <p><a href="http://www.spring520.com/" target="_blank">VeniceSpring</a> 2013</p>
       </footer>
     </div>
+    
+      <script src="/javascripts/jquery.js"></script>
+      <script src="/javascripts/bootstrap.js"></script>
+      <script charset="utf-8" src="/editor/kindeditor-min.js"></script>
+      <script charset="utf-8" src="/editor/lang/zh_CN.js"></script>
+
+      <script charset="utf-8" type="text/javascript">
+          //初始化编辑器
+          var editor;
+          KindEditor.ready(function (K) {
+              editor = K.create('#editor_post');
+          });
+
+          $("#btn_post_1").click(function () {
+              $("#post_2").show();
+              $("#post_1").hide();
+          });
+          $("#btn_post_2").click(function () {
+              $("#post_1").show();
+              $("#post_2").hide();
+          });
+      </script>
   </body>
 
-  <script src="/javascripts/jquery.js"></script>
-  <script src="/javascripts/bootstrap.js"></script>
 </html>

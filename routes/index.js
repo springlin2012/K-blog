@@ -4,8 +4,8 @@
  */
 
 var crypto = require('crypto')
-   , User = require('../models/user.js')
-   , Post = require('../models/post.js');
+   , User = require('../models/user')
+   , Post = require('../models/post');
 
 //导出
 //exports.index = function(req, res) {
@@ -22,7 +22,7 @@ module.exports = function (app) {
             }
             //var user = req.session.user;
             //console.log('Post.get ===>>> currentUser: ' + (user == null || user === 'undefined' ? "" : user.name));
-
+            //可写为全局共享调用函数
             res.render('index', {
                 title: '首页',
                 layout: 'layout',
@@ -112,7 +112,7 @@ module.exports = function (app) {
         //生成 口令 散列值
         var md5 = crypto.createHash('md5'),
         //digest('hex') 可用 hex
-            password = md5.update(req.body.password).digest('base64');
+         password = md5.update(req.body.password).digest('base64');
 
         console.log("====== login init ======");
         // function(req, user),此处曾写成req 报(TypeError: Cannot call method 'flash' of null)
@@ -123,7 +123,6 @@ module.exports = function (app) {
                 return res.redirect('/login');
             }
 
-            //console.log(" pwd compare ===>>> login pwd: " + password + " db pwd: " + user.password)
             if (user.password != password) {
                 req.flash('error', '用户口令错误!');
                 return res.redirect('/login');
@@ -140,21 +139,46 @@ module.exports = function (app) {
     //文章发表
     app.get('/post', checkLogin);
     app.get('/post', function (req, res) {
-        res.render('post', {
-            title: '发表',
-            user: req.session.user,
-            success: req.flash('success').toString(),
-            error: req.flash('error').toString()
+        //查询用户文章
+        Post.get(req.session.user.name, function (err, posts) {
+            if (err) posts = [];
+
+            res.render('post', {
+                title: '发表',
+                user: req.session.user,
+                posts: posts,
+                success: req.flash('success').toString(),
+                error: req.flash('error').toString()
+            });
         });
+
     });
 
     app.post('/post', checkLogin);
     app.post('/post', function (req, res) {
+        var postTitle = req.body.title;
+        //console.log("post log ===>>>"+ postTitle ? true:false);
+
         var currentUser = req.session.user,
-            post = new Post(currentUser.name, req.body.title, req.body.post);
+            post = "",
+            tIndex = 0,
+            title = "",
+            savePost = null;
+
+        if (postTitle) {
+            title = postTitle;
+            post = req.body.editor_post;
+        } else {
+            post = req.body.post;
+            tIndex = post.indexOf(":");
+            title = (post ? post.substr(0, tIndex) : "");
+            post = (post ? post.substr(tIndex + 1, post.length) : "");
+        }
+
+        savePost = new Post(currentUser.name, title, post);
 
         //保存发表
-        post.save(function (err) {
+        savePost.save(function (err) {
             //异常回调
             if (err) {
                 req.flash('error', err);
@@ -167,23 +191,84 @@ module.exports = function (app) {
 
     });
 
+    //用户链接
+    /** 
+     * 用户相关发帖以条形显示, 同时需查询出回帖信息
+     */
+    //app.get('/:name', checkLogin);
+    app.get('/:name', function (req, res) {
+        var username = req.params.name;
+        //console.log("link user ===>>>" + username);
+        User.get(username, function (err, user) {
+            if (err || !user) {
+                //中文提示可配置 config 文件中
+                req.flash('error', '用户不存在!');
+                res.redirect('/');
+            }
 
+            //提出公共方法
+            Post.get(user.name, function (err, posts) {
+                if (err) {
+                    req.flash('error', err);
+                    res.redirect('/');
+                }
+
+                res.render('user', {
+                    title: user.name,
+                    posts: posts,
+                    user: req.session.user,
+                    success: req.flash('success').toString(),
+                    error: req.flash('error').toString()
+                });
+            });
+
+        });
+    });
+
+    //文章标题链接
+    /**
+     * 需天添加回帖功能, 点击文章时显示回复信息
+     */
+    //app.get('/u/:title', checkLogin);
+    app.get('/u/:title', function (req, res) {
+
+        Post.getOne({"title": req.params.title}, function (err, post) {
+            //处理回调异常
+            if (err) {
+                req.flash('error', err);
+                res.redirect('/');
+            }
+
+            res.render('article', {
+                posts: post,
+                user: req.session.user,
+                success: req.flash('success').toString(),
+                error: req.flash('error').toString()
+            });
+        });
+        
+    }); 
+    
     //登出
     app.get('/logout', checkLogin);
     app.get('/logout', function (req, res) {
+        console.log("logout fun===>>> ");
         req.session.user = null;
         req.flash('success', '登出成功');
         res.redirect("/");
     });
 
+
 };
 
 //检查登陆
 function checkLogin(req, res, next){
+    
     if(!req.session.user){
         req.flash('error', '未登陆!');
         return res.redirect('/login');
     }
+    console.log("logout ===>>> " + req.session.user.name);
     next();
 }
 

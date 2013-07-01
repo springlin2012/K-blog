@@ -1,6 +1,6 @@
 
 var mongodb = require('./db')
-   , markdown = require('markdown').markdown;
+   //, markdown = require('markdown').markdown;
 
 //init Post
 function Post(name, title, post){
@@ -104,4 +104,40 @@ Post.get = function get(username, callback) {
             });
         });
     });
+};
+
+//查询单条数据
+Post.getOne = function (arguments, callback) {
+    //开启数据库连接
+    mongodb.open(function (err, db) {
+        if (err) {
+            mongodb.close();
+            callback(err);
+        }
+
+        //获取文档集合
+        db.collection('posts', function (err, collection) {
+            if (err) {
+                mongodb.close();
+                return callback(err);
+            }
+            //查询条件
+            var query = {},
+                username = arguments.username,
+                title = arguments.title;
+            if (username)
+                query.name = username;
+            if (title)
+                query.title = title;
+
+            //查询单条数据
+            collection.findOne(query, function (err, doc) {
+                mongodb.close();
+                if (err) callback(err, null);
+
+                callback(null, new Posts(doc.name, doc.title, doc.post, doc.time));
+            });
+        })
+    });
+
 };

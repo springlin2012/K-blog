@@ -1,0 +1,27 @@
+
+<div class="well form-inline left" style="text-align: left;">
+    <fieldset>
+        <legend>用户信息</legend>
+        <div class="control-group">
+            <label class="control-label" for="title">用戶名: </label>
+            <label class="control-label">XXX</label>
+        </div>
+    </fieldset>
+</div>
+
+    <% posts.forEach(function(post, index){  
+        if(index % 3 == 0){ %>
+        <div class="row">
+        <% } %>
+    <div class="span4">
+        <h2><%= post.title %></h2>
+        <p>作者: <%= post.name %> &nbsp;<%= post.time.minute %></p>
+        <p><%= post.post %></p>
+    </div>
+    <% if(index % 3 == 2){ %>
+        </div>
+    <% } %>
+    <% }) %>
+    <% if(posts.length % 3 != 0){%>
+        </div>
+    <% } %>
