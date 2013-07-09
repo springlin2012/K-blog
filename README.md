@@ -1,6 +1,6 @@
 # K-blog
 
-基于nodejs搭建的轻微博
+基于nodejs搭建的轻博客.
 
 ## 介绍
 K-blog 是使用 **Node.js** 及 **MongoDB**数据库, **Express**框架, **ejs**模板, 搭建的一个学习型的轻微博,
