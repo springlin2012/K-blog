@@ -1,6 +1,10 @@
 
 var mongodb = require('./db')
-   //, markdown = require('markdown').markdown;
+   //,markdown = require('markdown').markdown
+   ,querystring = require('querystring');
+
+
+var ObjectID = require('mongodb').ObjectID;;
 
 //init Post
 function Post(name, title, post){
@@ -18,7 +22,9 @@ function Posts(name, title, post, time){
 
 //导出
 module.exports = Post;
-
+/**
+ * 保存文章
+ */
 Post.prototype.save = function (callback) {
 
     var date = new Date();
@@ -29,12 +35,15 @@ Post.prototype.save = function (callback) {
         mothod: date.getFullYear() + "-" + (date.getMonth() + 1),
         day: date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate(),
         minute: date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes()
-    }
+    };
+
+    var article = this.post;
+    article = (article ? article.replace("  ", "") : "" );
 
     var post = {
         name: this.name,
         title: this.title,
-        post: this.post,
+        post: article,
         time: time
     }
 
@@ -76,7 +85,7 @@ Post.get = function get(username, callback) {
             }
 
             //查找name为 username的文档
-            var query = {};
+            var query = { "post": { "$ne": null, "$exists": true } };
             if (username) {
                 query.name = username;
             }
@@ -84,30 +93,50 @@ Post.get = function get(username, callback) {
             collection.find(query).sort({ time: -1 }).toArray(function (err, docs) {
                 mongodb.close();
                 if (err) {
-                    callback(err, null);
+                    return callback(err, null);
                 }
+                if (!docs && docs.length < 1) {
+                    return callback('无数据!', null);
+                }
+
                 //把查询出 post 对象放入 posts 数据中
                 // 方式一
                 var posts = [];
                 docs.forEach(function (doc, index) {
-                    var post = new Posts(doc.name, doc.title, doc.post, doc.time);
+                    var post = {};
+                    var article = doc.post;
+                   /* article = (!article ? "": 
+                                (article.length < 100 ? article:
+                                    (article.substr(0, 100)+"<a href='/topic/"+ doc._id +"' title='查看完整文章'><strong>...</strong></a>")
+                                ) 
+                               );*/
+
+                    post._id = doc._id;
+                    post.name = doc.name;
+                    post.title = doc.title;
+                    post.post = article;
+                    post.time = doc.time;
+
                     posts.push(post);
                 });
+                //console.log("===>>> [0]"+ (posts.length > 0 ? posts[0].post:'无数据') );
+
                 callback(null, posts);
-                
+
                 //方式二,解析 markdown 为 html
-                /* docs.forEach(function (doc) {
+              /*  docs.forEach(function (doc) {
                     doc.post = markdown.toHTML(doc.post);
+                    //console.log("===>>> "+ doc.post);
                 });
-                callback(err, docs);
-                */
+                callback(err, docs);*/
+                
             });
         });
     });
 };
 
 //查询单条数据
-Post.getOne = function (arguments, callback) {
+Post.getOne = function (topicId, callback) {
     //开启数据库连接
     mongodb.open(function (err, db) {
         if (err) {
@@ -121,23 +150,45 @@ Post.getOne = function (arguments, callback) {
                 mongodb.close();
                 return callback(err);
             }
+
             //查询条件
-            var query = {},
-                username = arguments.username,
-                title = arguments.title;
-            if (username)
-                query.name = username;
-            if (title)
-                query.title = title;
+            var query = {};
+            if (topicId)
+                query._id = new ObjectID(topicId);
 
             //查询单条数据
             collection.findOne(query, function (err, doc) {
                 mongodb.close();
-                if (err) callback(err, null);
+                if (err) return callback(err, null);
+                if (!doc) return callback(err, null);
 
                 callback(null, new Posts(doc.name, doc.title, doc.post, doc.time));
             });
-        })
+        });
+    });
+
+};
+
+//清空文章列表
+Post.delArticl = function(callback) {
+    
+    mongodb.open(function (err, db) {
+        if (err) {
+            mongodb.close(); 
+            return callback(err);
+        }
+
+        db.collection('posts', function (err, collection) {
+            if (err) {
+                mongodb.close();
+                return callback(err, null);
+            } 
+
+            collection.remove();
+            mongodb.close();
+
+            callback(null, '200');
+        });
     });
 
 };

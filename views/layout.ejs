@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta charset="utf-8" />
     <title>K-blog</title>
     <link href="/images/ctip.ico" type="image/x-icon" rel="icon">
     <link href="/images/ctip.ico" type="image/x-icon" rel="shortcut icon">
     <link rel='stylesheet' href='/stylesheets/bootstrap.css' />
-     <link href="stylesheets/bootstrap-responsive.css" rel="stylesheet">
+    <link rel="stylesheet" href="/stylesheets/bootstrap-responsive.css" />
+    <link rel="stylesheet" href="/stylesheets/kblog.css" />
+
     <style type="text/css">
       body {
         padding-top: 60px;
@@ -29,14 +32,23 @@
             <ul class="nav">
               <li class="active"><a href="/">首頁</a></li>
                <% if(!locals.user){ %>
-               <li><a href="/login">登入</a></li>
-               <li><a href="/reg">注册</a></li>
+                 <li><a href="/login">登入</a></li>
+                 <li><a href="/reg">注册</a></li>
                <% } else { %>
-               <li><a href="/logout">登出</a></li>
-               <li >
-                   <a>当前用户: &lt; <strong style="color: #ff6a00;"><%= locals.user.name %></strong> &gt;</a>
-               </li>
+                 <li><a href="/logout">登出</a></li>
+                 <li >
+                     <a>当前用户: &lt; <strong style="color: #ff6a00;"><%= locals.user.name %></strong> &gt;</a>
+                 </li>
                <% } %>
+               
+            </ul>
+            <ul class="nav pull-right">
+              <li>
+                <a href="/k_explain">版本</a>
+              </li>
+              <% if (locals.user && locals.user.name === 'admin') { %>
+                <li class=""><a href="/refreshArticle"><font color="red">刷新文章</font></a></li>
+              <% } %>
             </ul>
           </div>
         </div>
@@ -59,7 +71,11 @@
       <%- body %>
       <hr />
       <footer>
-        <p><a href="http://www.spring520.com/" target="_blank">VeniceSpring</a> 2013</p>
+        <p style="margin-left: 10px;">
+            <a href="http://livespring.b3log.org/" target="_blank">liveSpring</a>,
+            <a href="http://venicespring.b3log.org/" target="_blank">venicespring</a>
+            &nbsp; 2013.
+        </p>
       </footer>
     </div>
     
@@ -75,14 +91,21 @@
               editor = K.create('#editor_post');
           });
 
-          $("#btn_post_1").click(function () {
-              $("#post_2").show();
-              $("#post_1").hide();
-          });
-          $("#btn_post_2").click(function () {
-              $("#post_1").show();
-              $("#post_2").hide();
-          });
+
+          $(function(){
+
+            $("#btn_post_1").click(function () {
+                $("#post_2").show();
+                $("#post_1").hide();
+            });
+            $("#btn_post_2").click(function () {
+                $("#post_1").show();
+                $("#post_2").hide();
+            });
+
+            //隐藏提示
+            $("div.alert").fadeOut(3000);
+          })
       </script>
   </body>
 

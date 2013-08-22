@@ -38,9 +38,11 @@
     <div class="row">
     <% } %>
 <div class="span4">
-    <h2><%= post.title %></h2>
-    <p>作者: <%= post.name %> &nbsp;<%= post.time.minute %></p>
-    <p><%= post.post %></p>
+    <h2><a href="/topic/<%= post._id %>"><%= post.title %></a></h2>
+    <p>作者: <a href="/user/<%= post.name %>"> <%= post.name %> </a> &nbsp;<%= post.time.minute %></p>
+    <p>
+        <%- post.post %>
+    </p>
 </div>
 <% if(index % 3 == 2){ %>
     </div>
